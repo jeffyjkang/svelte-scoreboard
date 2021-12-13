@@ -1,16 +1,15 @@
 <script lang='ts'>
-  import {createEventDispatcher} from 'svelte';
+  import {PlayerType, ScoreboardStore} from './Stores';
 
-  const dispatch = createEventDispatcher();
-
-  let player: {name: string; points: number} = {
+  let player: PlayerType = {
     name: '',
     points: 0
   }
 
-  const onSubmit = (e: any) => {
-    e.preventDefault();
-    dispatch('addPlayer', player);
+  const addPlayer: () => void = () => {
+    ScoreboardStore.update((currentScoreboard: PlayerType[]) => {
+      return [player, ...currentScoreboard];
+    });
     player = {
       name: '',
       points: 0
@@ -18,7 +17,7 @@
   }
 </script>
 
-<form on:submit={onSubmit}>
+<form on:submit|preventDefault={addPlayer}>
   <input type='text' placeholder='Player Name' bind:value={player.name} />
   <input type='number' bind:value={player.points} />
   <input type='submit' value='Add Player' />

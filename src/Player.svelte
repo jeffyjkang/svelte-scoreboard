@@ -1,14 +1,20 @@
 <script lang="ts">
-  import {createEventDispatcher} from 'svelte';
-
-  const dispatch = createEventDispatcher();
+  import {PlayerType, ScoreboardStore} from './Stores';
 
   export let name: string;
   export let points: number;
+
   let showControls: boolean = false;
   
   const addPoint: () => void = () => points +=1;
   const removePoint: () => void = () => points -=1;
+  
+  const deletePlayer: () => void = (() => {
+    ScoreboardStore.update((currentScoreboard: PlayerType[]) => {
+      return currentScoreboard.filter((player: PlayerType) => player.name !== name);
+    });
+  });
+  
   const toggleControls: () => void = () => showControls = !showControls;
 </script>
 
@@ -18,7 +24,7 @@
     <button on:click={toggleControls}>
       {#if showControls}-{:else}+{/if}
     </button>
-    <button on:click|preventDefault = {()=>dispatch('deletePlayer', name)}>
+    <button on:click|preventDefault={deletePlayer}>
       X
     </button>
   </h1>
